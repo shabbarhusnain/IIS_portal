@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block start %}
+<style>
+.auth-wrap{min-height:calc(100vh - 40px);display:flex;align-items:center;justify-content:center;padding:35px 16px;background:radial-gradient(circle at 80% 10%,#cffafe,transparent 35%),linear-gradient(135deg,#f8fafc,#eef4ff)}
+.auth-card{width:100%;max-width:520px;background:#fff;border:1px solid #e4e9f0;border-radius:24px;padding:36px;box-shadow:0 25px 70px rgba(15,23,42,.11)}
+.brand-mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#06b6d4);display:grid;place-items:center;color:#fff;font-weight:900;margin-bottom:22px}
+.auth-card h1{font-size:30px;color:#0f172a;font-weight:800;margin:0}.sub{color:#64748b;margin:8px 0 28px}
+.field{margin-bottom:18px}.field label{display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:8px}.field input{width:100%;height:50px;box-sizing:border-box;border:1px solid #dbe2ea;border-radius:12px;padding:0 14px;font-size:15px}.field input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.1)}
+.auth-btn{width:100%;height:50px;border:0;border-radius:12px;background:linear-gradient(135deg,#2563eb,#06b6d4);color:#fff;font-weight:800;font-size:15px;cursor:pointer}.login-link{text-align:center;margin:20px 0 0;color:#64748b;font-size:14px}.login-link a{color:#2563eb;font-weight:700;text-decoration:none}
+</style>
+<div class="auth-wrap">
+  <form class="auth-card" method="post">
+    {% csrf_token %}
+    <div class="brand-mark">S</div>
+    <h1>Create teacher account</h1><p class="sub">Set up access to the student management portal.</p>
+    {% if messages %}{% for message in messages %}<div class="alert alert-primary">{{message}}</div>{% endfor %}{% endif %}
+    <div class="row">
+      <div class="col-md-6 field"><label>First Name</label><input type="text" name="first_name" required></div>
+      <div class="col-md-6 field"><label>Last Name</label><input type="text" name="last_name" required></div>
+      <div class="col-md-12 field"><label>Username</label><input type="text" name="username" required></div>
+      <div class="col-md-12 field"><label>Password</label><input type="password" name="password" required></div>
+    </div>
+    <button type="submit" class="auth-btn">Create Account</button>
+    <p class="login-link">Already have an account? <a href="/login/">Sign in</a></p>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block start %}
+<style>
+:root{--navy:#0b1220;--blue:#2563eb;--cyan:#06b6d4;--ink:#172033;--muted:#64748b;--line:#e5eaf1;--soft:#f6f8fc}
+.student-shell{min-height:calc(100vh - 40px);background:linear-gradient(135deg,#f8fafc 0%,#eef5ff 100%);padding:48px 18px}
+.form-card{max-width:980px;margin:auto;background:#fff;border:1px solid rgba(226,232,240,.9);border-radius:24px;box-shadow:0 24px 60px rgba(15,23,42,.09);overflow:hidden}
+.form-head{padding:30px 34px;background:linear-gradient(135deg,#0b1220,#172554);color:#fff}
+.form-head h1{font-size:28px;font-weight:750;margin:0}.form-head p{margin:7px 0 0;color:#b9c6da}
+.form-body{padding:34px}.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:#64748b;font-weight:800;margin:0 0 20px}
+.field{margin-bottom:20px}.field label{display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:8px}
+.field input,.field select{width:100%;min-height:48px;border:1px solid #dbe2ea;border-radius:12px;padding:0 14px;font-size:15px;color:#172033;background:#fff;transition:.2s;box-sizing:border-box}
+.field input:focus,.field select:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.10);outline:none}
+.upload input{padding:11px 12px}.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:10px;padding-top:24px;border-top:1px solid var(--line)}
+.btn-main{border:0;border-radius:12px;background:linear-gradient(135deg,#2563eb,#06b6d4);color:#fff;padding:13px 22px;font-weight:750;cursor:pointer;box-shadow:0 10px 22px rgba(37,99,235,.20)}
+@media(max-width:700px){.student-shell{padding:22px 12px}.form-head,.form-body{padding:24px}.actions{justify-content:stretch}.btn-main{width:100%}}
+</style>
+
+<div class="student-shell">
+  <form class="form-card" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-head">
+      <h1>Add Student Marks</h1>
+      <p>Create result of each student carefully by filling these feilds below.</p>
+    </div>
+    <div class="form-body">
+      <div class="section-title">Personal Information</div>
+      <div class="row">
+        <div class="col-md-6 field"><label>Select Student</label>
+            <select name="studentid" required>
+            <option value="" selected disabled>Select Student</option>
+            {% for student in queryset %}
+              <option value="{{student.id}}">{{ student.std_name}} (ID: {{student.std_id}})</option>
+            <output></output>
+              {% endfor %}
+            </select>
+        <div class="col-md-6 field"><label>Department</label>
+            <output  type="text" >{{department.department}}</div>
+        <div class="col-md-6 field"><label>Semester</label>
+            <output type="text" required>Semester {{department.semester}}</div>
+
+            
+
+        <div class="table-wrap"><table class="table">
+        <thead>
+            <tr>
+                <th>Sr</th>
+                <th>Course Title</th>
+                <th>Course Code</th>
+                <th>Credit Hours</th>
+                <th>Obtained Marks</th>
+            </tr></thead>
+        <tbody>{% for student in course %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{student.course_title}}</td>
+                <td>{{student.course_code}}</td>
+                <td><input name="coursecredit" type="text" required></td>
+                <td><input name="obtainmarks" type="text" required></td>
+            {% endfor %}</tbody>
+      </table></div>  
+      </div>
+      <div class="actions"><button type="submit" class="btn-main">Create Student Record</button></div>
+    </div>
+  </form>
+</div>
+{% endblock %}
