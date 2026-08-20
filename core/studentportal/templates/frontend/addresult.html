@@ -7,6 +7,13 @@
 .form-head{padding:30px 34px;background:linear-gradient(135deg,#0b1220,#172554);color:#fff}
 .form-head h1{font-size:28px;font-weight:750;margin:0}.form-head p{margin:7px 0 0;color:#b9c6da}
 .form-body{padding:34px}.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:#64748b;font-weight:800;margin:0 0 20px}
+.table-card{background:#f6f6f6;border:1px solid #e3e3e3;border-radius:20px;overflow:hidden;box-shadow:0 12px 30px rgba(58, 81, 135, 0.05)}
+table{margin:10!important}
+thead{background:#f8fafc}
+th{border:0!important;color:#64748b!important;font-size:12px;text-transform:uppercase;letter-spacing:.08em;padding:17px!important}
+td{padding:18px!important;vertical-align:middle!important;border-color:#eef2f7!important;color:#334155}
+tbody tr:hover{background:#f8fbff}
+.action-link{color:#2563eb;font-weight:750;text-decoration:none}
 .field{margin-bottom:20px}.field label{display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:8px}
 .field input,.field select{width:100%;min-height:48px;border:1px solid #dbe2ea;border-radius:12px;padding:0 14px;font-size:15px;color:#172033;background:#fff;transition:.2s;box-sizing:border-box}
 .field input:focus,.field select:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.10);outline:none}
@@ -37,30 +44,35 @@
             <output  type="text" >{{department.department}}</div>
         <div class="col-md-6 field"><label>Semester</label>
             <output type="text" required>Semester {{department.semester}}</div>
-
+        </div>
+      </div>
             
-
-        <div class="table-wrap"><table class="table">
+        </div>          
+        <div class="table-card"><table class="table">
         <thead>
             <tr>
                 <th>Sr</th>
                 <th>Course Title</th>
                 <th>Course Code</th>
                 <th>Credit Hours</th>
+                <th>Total Marks</th>
                 <th>Obtained Marks</th>
             </tr></thead>
         <tbody>{% for student in course %}
             <tr>
                 <td>{{forloop.counter}}</td>
-                <td>{{student.course_title}}</td>
+                <td >{{student.course_title}}<input type="hidden" name="coursetitle" value="{{ student.id }}"></td>
                 <td>{{student.course_code}}</td>
-                <td><input name="coursecredit" type="text" required></td>
-                <td><input name="obtainmarks" type="text" required></td>
+                <td>{{student.course_credit}}</td>
+                 <td>{{student.course_total_marks}}</td>
+                <td><input name="obtainmarks" type="number" required></td>
             {% endfor %}</tbody>
       </table></div>  
-      </div>
-      <div class="actions"><button type="submit" class="btn-main">Create Student Record</button></div>
+      <div class="row">
+      <div class="actions"><button type="submit" class="btn-main">Upload and add another</button></div>
+      <a href="{% url 'students' id=department.id %}" class="back-btn">← Back to List</a>
     </div>
+  </div>
   </form>
 </div>
 {% endblock %}

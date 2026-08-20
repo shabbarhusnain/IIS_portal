@@ -29,12 +29,13 @@ tbody tr:hover{background:#f8fbff}
 <div class="page">
   <div class="wrap">
     <div><a href="{% url 'add_result' id=dept.id%}">Add Result</a></div>
+    <div class="actions"><a href="{% url 'view_courses' id=dept.id %}" type="submit" class="btn-main">Veiw Course</a></div>
     <div class="crumb-bar">
       <a href="{% url 'semesters' id=dept.department.id %}" class="back-btn">← Back to List</a>
       <a href="/menu_page/" class="back-btn">Menu</a>
-      <span class="pill">Dept: {{dept.department}}</span>
+      <span class="pill">Department: {{dept.department}}</span>
       <span class="pill">Semester: {{dept.semester}}</span>
-      <span class="pill">Total: {{totalstudent}}</span>
+      <span class="pill">Total Students: {{totalstudent}}</span>
     </div>
 
     <div class="head">

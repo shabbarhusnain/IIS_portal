@@ -4,10 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout, login as auth_login
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
 import random
 from datetime import datetime
-from django.db.models import Q
+from django.db.models import Q, Sum,  Count
 from django.core.paginator import Paginator
 # Create your views here.
 # ---------------------------------------------------------------------------------------------------------
@@ -80,10 +79,17 @@ def students(request,id):
 @login_required(login_url='/login/')
 def studentcard(request, id):
     queryset= Student.objects.get(id=id)
-    course = CourseMarks.objects.filter(student__id=id)
+    semester=queryset.semester
+    course= CourseMarks.objects.filter(student__id=id)
+    marks=0
+    for crs in course:
+        marks+=crs.course_marks
+    semesterhistory=SemesterHistory.objects.filter(student=queryset)
     context={
         'student':queryset,
-        'course':course
+        'course':course,
+        'totalmarks':marks,
+        'semesterhistory':semesterhistory
     }
     return render(request, 'frontend/studentcard.html', context)
 
@@ -163,8 +169,9 @@ def update_student(request, id):
 @login_required(login_url='/login/')
 def delete_student(request,id):
     queryset= Student.objects.get(id=id)
+    semester=queryset.semester.id
     queryset.delete()
-    return redirect(f'/studentcard/{id}')
+    return redirect(f'/students/{semester}')
 # ---------------------------------------------------------------------------------------------------------
 def register(request):
     if request.method == "POST":
@@ -223,17 +230,141 @@ def add_result(request,id):
     queryset=Student.objects.filter(semester__id=id)
     department=Semester.objects.get(id=id)
     course=Courses.objects.filter(semester__id=id)
+    # course_list = CourseMarks.objects.filter(student__id=pk)
     if request.method=="POST":
         data=request.POST
-        coursecredit=data.get('coursecredit')
-        obtainmarks=data.get('obtainmarks')
-        CourseMarks.objects.create(
-            course_marks=obtainmarks,
-            course_credit=coursecredit
+        student=data.get('studentid')
+        courseid=data.getlist('coursetitle')
+        obtainmarks=data.getlist('obtainmarks')
+        student_obj=Student.objects.get(id=student)
+        for c_id, marks in zip(courseid, obtainmarks ):
+            course_obj =Courses.objects.get(id=c_id)
+            CourseMarks.objects.create(
+                student=student_obj,
+                course=course_obj,
+                course_marks=marks
+            )
+        coursemarks=CourseMarks.objects.filter(student=student_obj)
+        total_qp = 0.0
+        total_ch = 0.0
+        for course in coursemarks:
+            if course.course_total_marks >0:
+                obtain_marks=course.course_marks
+                total_marks= course.course_total_marks
+                age=round((obtain_marks/total_marks)*100,2)
+                if age>=90 and age<=100 :
+                    grade = 'A+'
+                    gp=4.00
+                elif age>=85 and age<=89 :
+                    grade = 'A'
+                    gp=3.67
+                elif age>=80 and age<=84 :
+                    grade = 'A-'
+                    gp=3.33
+                elif age>=75 and age<=79 :
+                    grade = 'B+'
+                    gp=3.00          
+                elif age>=70 and age<=74 :
+                    grade = 'B'
+                    gp=2.70
+                elif age>=65 and age<=69 :
+                    grade = 'B-'
+                    gp=2.50
+                elif age>=60 and age<=64 :
+                    grade = 'C+'
+                    gp=2.00
+                elif age>=55 and age<=59 :
+                    grade = 'C'
+                    gp=1.70  
+                elif age>=50 and age<=54 :
+                    grade = 'D'
+                    gp=1.00  
+                else:
+                    grade = 'F'
+                    gp=0.00  
+                ch = course.course.course_credit
+                qp = gp*ch 
+                total_qp +=qp
+                total_ch +=ch
+                course.course_grade=grade
+                course.course_qp=qp
+                course.course_percentage=age
+                course.save()
+            continue    
+        gpa = round(total_qp/total_ch,2)
+        semester_obj=Semester.objects.get(id=id)
+        if gpa<=2.00:
+            status=False
+        else:
+            status=True 
+        SemesterHistory.objects.create(
+            student=student_obj,
+            semester=semester_obj,
+            sgpa=gpa,
+            status=status
         )
+        if status==True:
+            next_semesters=Semester.objects.filter(id__gt=id).order_by('id')
+            new_semester=next_semesters.first()
+            if new_semester:
+                student_obj.semester=new_semester
+                course=Courses.objects.filter(semester=new_semester)
+                student_obj.enrolled_courses.set(course)
+                student_obj.save()
+        studenthistory=SemesterHistory.objects.filter(student=student_obj)
+        all_sem_qp=0.0
+        total_c_h=0
+        for history in studenthistory:
+            sgpa=history.sgpa
+            c_h=0
+            for crs in history.semester.semestercourses.all():
+                c_h+= crs.course_credit
+            sem_qp=round(sgpa*c_h,2)
+            total_c_h+=c_h
+            all_sem_qp+=sem_qp
+        if total_c_h>0:
+            totalcgpa=round(all_sem_qp/total_c_h,2)
+            student_obj.cgpa=totalcgpa
+            student_obj.save()
+        return redirect(f'/students/{id}/')    
     context={
         'queryset':queryset,
         'department':department,
         'course':course
     }
     return render(request, 'frontend/addresult.html',context)
+def assign_course(request,id):
+    semester=Semester.objects.get(id=id)
+    semester_id=semester.id
+    if request.method=="POST":
+        data=request.POST
+        coursetitle=data.get('coursetitle')
+        coursecode=data.get('coursecode')
+        coursecredit=data.get('coursecredit')
+        Courses.objects.create(
+            semester=semester,
+            course_title=coursetitle,
+            course_code=coursecode,
+            course_credit=coursecredit
+        )
+        messages.info(request,f'Course {coursetitle} Added Successfully in {semester} Semester of {semester.department}')
+        return redirect('view_courses',id=semester_id)
+    return render(request,'frontend/assign_course.html',{'semester':semester})
+def view_courses(request,id):
+    pk=Semester.objects.get(id=id)
+    queryset=Courses.objects.filter(semester__id=id)
+    csum=queryset.count()
+    return render(request, 'frontend/view_courses.html',{'courses':queryset,'pk':pk,'csum':csum})
+def delete_course(request,id):
+    course=Courses.objects.get(id=id)
+    semester_id= course.semester.id
+    course.delete()
+    return redirect('view_courses',id=semester_id)
+def add_department(request):
+    if request.method=="POST":
+        department=request.POST.get('department')
+        Department.objects.create(depart=department)
+        return redirect('/std_portal/')
+    return render(request, 'frontend/add_department.html')
+def display_result(request):
+    return render(request,'frontend/studentcard.html')

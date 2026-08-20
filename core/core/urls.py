@@ -36,7 +36,11 @@ urlpatterns = [
     path('students/<int:id>/',students,name='students'),
     path('studentcard/<int:id>',studentcard,name='studentcard'),
     path('add_result/<id>/',add_result, name="add_result"),
-    path('menu_page/',menu_page, name='menu_page')
+    path('assign_course/<id>/',assign_course, name='assign_course'),
+    path('menu_page/',menu_page, name='menu_page'),
+    path('view_courses/<id>/',view_courses,name='view_courses'),
+    path('delete_course/<id>/',delete_course,name='delete_course'),
+    path('add_department/',add_department, name='add_department')
     ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)    
