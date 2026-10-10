@@ -1,24 +1,23 @@
 {% extends "base.html" %}
 {% block start %}
 <style>
-:root{--navy:#0b1220;--blue:#2563eb;--cyan:#06b6d4;--line:#e5eaf1}
-.student-shell{min-height:calc(100vh - 40px);background:linear-gradient(135deg,#f8fafc 0%,#eef5ff 100%);padding:48px 18px}
-.form-card{max-width:980px;margin:auto;background:#fff;border:1px solid rgba(226,232,240,.9);border-radius:24px;box-shadow:0 24px 60px rgba(15,23,42,.09);overflow:hidden}
-.form-head{padding:30px 34px;background:linear-gradient(135deg,#0b1220,#172554);color:#fff}
+.student-shell{min-height:100vh;background:linear-gradient(135deg,#f8fafc 0%,#eef5ff 100%);padding:48px 32px}
+.form-card{max-width:980px;margin:auto;background:#fff;border:1px solid rgba(226,232,240,.9);border-radius:24px;box-shadow:var(--shadow-strong);overflow:hidden}
+.form-head{padding:30px 34px;background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff}
 .form-head h1{font-size:28px;font-weight:750;margin:0}
 .form-head p{margin:7px 0 0;color:#b9c6da}
 .form-body{padding:34px}
-.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:#64748b;font-weight:800;margin:0 0 20px}
+.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:800;margin:0 0 20px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+.col-md-12{grid-column:1/-1}
 .field{margin-bottom:20px}
 .field label{display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:8px}
-.field input, .field output{width:100%;min-height:48px;border:1px solid #dbe2ea;border-radius:12px;padding:0 14px;font-size:15px;color:#172033;background:#fff;transition:.2s;box-sizing:border-box;display:flex;align-items:center}
-.field output{background:#f8fafc;color:#64748b;font-weight:700}
-.field input:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.10);outline:none}
+.field input,.field output{width:100%;min-height:48px;border:1px solid #dbe2ea;border-radius:12px;padding:0 14px;font-size:15px;color:var(--ink);background:#fff;transition:.2s;box-sizing:border-box;display:flex;align-items:center;font-family:var(--font-body)}
+.field output{background:#f8fafc;color:var(--muted);font-weight:700}
+.field input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.10);outline:none}
 .upload input{padding:11px 12px}
 .actions{display:flex;justify-content:flex-end;gap:12px;margin-top:10px;padding-top:24px;border-top:1px solid var(--line)}
-.btn-main{border:0;border-radius:12px;background:linear-gradient(135deg,#2563eb,#06b6d4);color:#fff;padding:13px 24px;font-weight:750;cursor:pointer;box-shadow:0 10px 22px rgba(37,99,235,.20)}
-.btn-cancel{border:1px solid #dbe2ea;border-radius:12px;background:#fff;color:#475569;padding:13px 20px;font-weight:750;text-decoration:none}
-@media(max-width:700px){.student-shell{padding:22px 12px}.form-head,.form-body{padding:24px}.actions{flex-direction:column-reverse}.btn-main,.btn-cancel{width:100%;text-align:center}}
+@media(max-width:700px){.student-shell{padding:70px 12px 22px}.form-head,.form-body{padding:24px}.row{grid-template-columns:1fr}.actions{flex-direction:column-reverse}.btn-main,.btn-cancel{width:100%;text-align:center}}
 </style>
 
 <div class="student-shell">

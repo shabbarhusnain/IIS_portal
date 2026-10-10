@@ -89,6 +89,8 @@ class SemesterHistory(models.Model):
     semester=models.ForeignKey(Semester,on_delete=models.CASCADE, related_name='allsemester', null=True, blank=True)
     sgpa=models.FloatField(default=0.0)
     status=models.BooleanField(default=True)
+    grade=models.CharField(max_length=10,null=True)
+    percentage=models.FloatField(default=0)
     def __str__(self) -> str:
         return str(self.sgpa)
     

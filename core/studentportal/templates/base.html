@@ -1,33 +1,121 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>My Website</title>
-    <style>
-        /* Table layout ko khoobsurat aur clean karne ke liye */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Ilm Board{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ Ilm Board — global design tokens ============ */
+:root{
+  --navy:#5d2e02;
+  --navy-deep:#3e1f0066;
+  --blue:#90551e;
+  --blue-dark:#5d2e0265;
+  --cyan:#542d01;
+  --amber:#ffa200;
+  --green:#795f02;
+  --red:#c02c2c;
+  --ink:#5d3a05e6;
+  --muted:#64748b;
+  --line:#e5eaf1;
+  --soft:#f6f8fc;
+  --card:#ffffff;
+  --r-lg:20px;
+  --r-md:14px;
+  --shadow-soft:0 12px 30px rgba(15,23,42,.06);
+  --shadow-strong:0 22px 55px rgba(15,23,42,.10);
+  --font-display:'Sora',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--soft);-webkit-font-smoothing:antialiased}
+h1,h2,h3,.form-head h1,.brand-word{font-family:var(--font-display)}
+table{border-collapse:collapse;width:100%;margin-top:20px}
+th,td{padding:10px;text-align:left}
+
+/* ---------- shared building blocks reused across pages ---------- */
+.pill{background:#eff6ff;color:var(--blue);border:1px solid #dbeafe;border-radius:10px;padding:8px 13px;font-weight:750;font-size:14px}
+.back-btn{color:#475569;text-decoration:none;font-weight:700;padding:8px 14px;background:#fff;border:1px solid #dbe2ea;border-radius:10px;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.back-btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn-main{border:0;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;padding:13px 22px;font-weight:750;cursor:pointer;box-shadow:0 10px 22px rgba(37,99,235,.22);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+.btn-main:hover{filter:brightness(1.06);color:#fff;transform:translateY(-1px)}
+.btn-cancel{border:1px solid #dbe2ea;border-radius:12px;background:#fff;color:#475569;padding:13px 20px;font-weight:750;text-decoration:none;text-align:center}
+.action-link{color:var(--blue);font-weight:750;text-decoration:none}
+.action-link:hover{text-decoration:underline}
+
+/* ---------- app shell / sidebar ---------- */
+.frame{display:flex;min-height:100vh}
+.app-sidebar{
+  width:252px;flex-shrink:0;background:linear-gradient(180deg,var(--navy),var(--navy-deep));
+  color:#fff;display:flex;flex-direction:column;padding:26px 18px;
+  position:fixed;top:0;left:0;bottom:0;z-index:40;transition:transform .25s ease;
+}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:0 8px 26px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:22px}
+.sb-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:18px;flex-shrink:0}
+.brand-word{font-weight:750;font-size:18px;line-height:1.1}
+.brand-word small{display:block;font-family:var(--font-body);font-weight:500;font-size:11px;color:#8fa2c0;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.sb-nav{display:flex;flex-direction:column;gap:4px;flex:1}
+.sb-link{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;color:#c7d3e6;text-decoration:none;font-weight:600;font-size:14.5px;transition:.15s}
+.sb-link:hover{background:rgba(255,255,255,.07);color:#fff}
+.sb-ico{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:12px;font-weight:800;flex-shrink:0;font-family:var(--font-display)}
+.sb-foot{border-top:1px solid rgba(255,255,255,.08);padding-top:14px;margin-top:8px}
+.sb-close,.sb-toggle{display:none}
+
+.app-main{flex:1;margin-left:252px;min-width:0}
+
+.auth-shell .app-sidebar,.auth-shell .sb-toggle{display:none}
+.auth-shell .app-main{margin-left:0}
+
+@media(max-width:960px){
+  .app-sidebar{transform:translateX(-100%)}
+  .app-sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.35)}
+  .app-main{margin-left:0}
+  .sb-toggle{display:flex;position:fixed;top:16px;left:16px;z-index:30;width:44px;height:44px;border-radius:12px;background:var(--navy);color:#fff;border:0;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--shadow-strong);cursor:pointer}
+  .sb-close{display:block;position:absolute;top:20px;right:18px;background:transparent;border:0;color:#8fa2c0;font-size:20px;cursor:pointer}
+  .sb-overlay{display:none;position:fixed;inset:0;background:rgba(11,18,32,.45);z-index:35}
+  .sb-overlay.open{display:block}
+  .auth-shell .sb-overlay{display:none!important}
+}
+</style>
+{% block extra_head %}{% endblock %}
 </head>
-<body>  
-   
-    {% block start %}
-    {% endblock %}
+<body class="{% block body_class %}app-shell{% endblock %}">
+<div class="frame">
+
+  <button class="sb-toggle" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
+  <div class="sb-overlay" onclick="toggleSidebar()"></div>
+
+  <aside class="app-sidebar" id="appSidebar">
+    <button class="sb-close" onclick="toggleSidebar()" aria-label="Close menu">✕</button>
+    <div class="sb-brand">
+      <div class="sb-mark">I</div>
+      <div class="brand-word">Ilm Board<small>Academic Records</small></div>
+    </div>
+    <nav class="sb-nav">
+      <a class="sb-link" href="/menu_page/"><span class="sb-ico">D</span> Dashboard</a>
+      <a class="sb-link" href="/std_portal/"><span class="sb-ico">S</span> Students &amp; Departments</a>
+      <a class="sb-link" href="/add_std/"><span class="sb-ico">+</span> Add Student</a>
+      <a class="sb-link" href="/add_department/"><span class="sb-ico">B</span> Add Department</a>
+      <a class="sb-link" href="/register/"><span class="sb-ico">T</span> Register Teacher</a>
+    </nav>
+    <div class="sb-foot">
+      <a class="sb-link" href="/logout/"><span class="sb-ico">⏻</span> Logout</a>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    {% block start %}{% endblock %}
+  </div>
+
+</div>
 <script>
-    console.log("+923441162115");
+function toggleSidebar(){
+  document.getElementById('appSidebar').classList.toggle('open');
+  document.querySelector('.sb-overlay').classList.toggle('open');
+}
 </script>
 </body>
 </html>

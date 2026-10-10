@@ -297,11 +297,36 @@ def add_result(request,id):
             status=False
         else:
             status=True 
+        if gpa >= 4.00:
+            semester_grade = 'A+'
+        elif gpa >= 3.67 and gpa < 4.00:
+            semester_grade = 'A'
+        elif gpa >= 3.33 and gpa < 3.67:
+            semester_grade = 'A-'
+        elif gpa >= 3.00 and gpa < 3.33:
+            semester_grade = 'B+'
+        elif gpa >= 2.70 and gpa < 3.00:
+            semester_grade = 'B'
+        elif gpa >= 2.50 and gpa < 2.70:
+            semester_grade = 'B-'
+        elif gpa >= 2.30 and gpa < 2.50:
+            semester_grade = 'C+'
+        elif gpa >= 2.00 and gpa < 2.30:
+            semester_grade = 'C'
+        elif gpa >= 1.70 and gpa < 2.00:
+            semester_grade = 'C-'
+        elif gpa >= 1.00 and gpa < 1.70:
+            semester_grade = 'D'
+        else:
+            semester_grade = 'F'
+        semester_age=round((gpa/4.0)*100,1)
         SemesterHistory.objects.create(
             student=student_obj,
             semester=semester_obj,
             sgpa=gpa,
-            status=status
+            status=status,
+            grade=semester_grade,
+            percentage=semester_age
         )
         if status==True:
             next_semesters=Semester.objects.filter(id__gt=id).order_by('id')

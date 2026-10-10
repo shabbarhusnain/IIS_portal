@@ -1,15 +1,30 @@
 {% extends 'base.html' %}
 {% block start %}
 <style>
-.dashboard{min-height:calc(100vh - 40px);background:#f6f8fc;padding:36px 18px}.dash-inner{max-width:1180px;margin:auto}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:#2563eb;font-weight:800}.topbar h1{margin:4px 0 0;font-size:32px;color:#0f172a;font-weight:850}.logout{border:1px solid #dbe2ea;color:#334155;background:#fff;border-radius:11px;padding:10px 17px;font-weight:700;text-decoration:none}
-.hero{background:linear-gradient(135deg,#0b1220,#172554);border-radius:24px;padding:30px;color:#fff;display:flex;justify-content:space-between;align-items:center;box-shadow:0 22px 50px rgba(15,23,42,.12);margin-bottom:24px}.hero h2{margin:0;font-size:24px}.hero p{color:#b9c6da;margin:7px 0 0}.count{font-size:40px;font-weight:850}.count small{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#9fb0ca;text-align:right}
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.action-card{background:#fff;border:1px solid #e5eaf1;border-radius:20px;padding:24px;text-decoration:none;color:#172033;box-shadow:0 12px 30px rgba(15,23,42,.05);transition:.2s}.action-card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(15,23,42,.09)}.icon{width:46px;height:46px;border-radius:13px;background:#eff6ff;color:#2563eb;display:grid;place-items:center;font-weight:900;font-size:20px;margin-bottom:18px}.action-card h3{margin:0 0 6px;font-size:18px}.action-card p{margin:0;color:#64748b;font-size:14px}
-@media(max-width:650px){.topbar{align-items:flex-start;gap:15px}.topbar h1{font-size:26px}.hero{display:block}.count{margin-top:20px}.count small{text-align:left}.cards{grid-template-columns:1fr}}
+.dashboard{min-height:100vh;background:var(--soft);padding:36px 32px}
+.dash-inner{max-width:1180px;margin:auto}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--blue);font-weight:800}
+.topbar h1{margin:4px 0 0;font-size:32px;color:#0f172a;font-weight:800}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy-deep));border-radius:24px;padding:34px;color:#fff;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow-strong);margin-bottom:24px;flex-wrap:wrap;gap:20px}
+.hero h2{margin:0;font-size:24px}
+.hero p{color:#b9c6da;margin:7px 0 0}
+.count{font-size:42px;font-weight:800;font-family:var(--font-display)}
+.count small{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#9fb0ca;text-align:right;font-family:var(--font-body);font-weight:600;margin-top:4px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.action-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow-soft);transition:.2s}
+.action-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-strong);border-color:#c7d9fb}
+.icon{width:46px;height:46px;border-radius:13px;background:#eff6ff;color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:20px;margin-bottom:18px;font-family:var(--font-display)}
+.action-card h3{margin:0 0 6px;font-size:18px;font-weight:700}
+.action-card p{margin:0;color:var(--muted);font-size:14px}
+@media(max-width:650px){.dashboard{padding:70px 16px 30px}.topbar h1{font-size:26px}.hero{display:block}.count{margin-top:20px;text-align:left}.count small{text-align:left}.cards{grid-template-columns:1fr}}
 </style>
 <div class="dashboard"><div class="dash-inner">
-  <div class="topbar"><div><div class="eyebrow">Student Management</div><h1>Dashboard</h1></div><a href="/logout/" class="logout">Logout</a></div>
-  <div class="hero"><div><h2>Academic Records</h2><p>Manage students, teachers and academic information.</p></div><div class="count">{{count}}<small>Total Students</small></div></div>
+  <div class="topbar"><div><div class="eyebrow">Student Management</div><h1>Dashboard</h1></div></div>
+  <div class="hero">
+    <div><h2>Academic Records</h2><p>Manage students, teachers and academic information.</p></div>
+    <div class="count">{{count}}<small>Total Students</small></div>
+  </div>
   <div class="cards">
     <a href="/add_std/" class="action-card"><div class="icon">+</div><h3>Add New Student</h3><p>Create a new student record and assign a department.</p></a>
     <a href="/register/" class="action-card"><div class="icon">T</div><h3>Register Teacher</h3><p>Create access for a new teacher account.</p></a>

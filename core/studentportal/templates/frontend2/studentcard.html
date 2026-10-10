@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block start %}
+<style>
+.profile-page{min-height:calc(100vh - 40px);background:#f6f8fc;padding-bottom:50px}.profile-head{background:linear-gradient(135deg,#0b1220,#172554);color:#fff;padding:38px max(18px,calc((100% - 1180px)/2)) 90px}.profile-head .eyebrow{color:#7dd3fc;font-size:12px;text-transform:uppercase;letter-spacing:.13em;font-weight:800}.profile-head h1{margin:7px 0 0;font-size:32px}.profile-head p{color:#b9c6da;margin:6px 0 0}.content{max-width:1180px;margin:-58px auto 0;padding:0 18px}.profile-grid{display:grid;grid-template-columns:300px 1fr;gap:20px}.card{background:#fff;border:1px solid #e5eaf1;border-radius:22px;box-shadow:0 16px 38px rgba(15,23,42,.07)}.identity{padding:24px;text-align:center}.photo{width:180px;height:210px;object-fit:cover;border-radius:18px;border:5px solid #fff;box-shadow:0 10px 25px rgba(15,23,42,.12)}.no-photo{width:180px;height:210px;margin:auto;border-radius:18px;background:#f1f5f9;color:#94a3b8;display:grid;place-items:center}.identity h2{font-size:22px;margin:18px 0 5px;color:#0f172a}.id{color:#64748b;margin:0 0 18px}.badgex{display:inline-block;background:#eff6ff;color:#2563eb;border-radius:10px;padding:8px 14px;font-weight:800;font-size:13px}.details{padding:28px}.details h3,.courses h3{margin:0 0 20px;color:#0f172a;font-size:20px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.detail{padding:17px;border:1px solid #e8edf3;border-radius:14px;background:#fbfcfe}.detail span{display:block;color:#64748b;font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}.detail strong{color:#172033;font-size:15px;overflow-wrap:anywhere}.address{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;padding-top:20px;border-top:1px solid #e8edf3}.actions a,.actions button{border-radius:10px;padding:10px 15px;font-weight:750;text-decoration:none;border:1px solid #dbe2ea;background:#fff;color:#334155;cursor:pointer}.actions .update{background:#2563eb;color:#fff;border-color:#2563eb}.actions .delete{color:#dc2626}.courses{margin-top:20px;padding:28px}.table-wrap{overflow:auto;border:1px solid #e8edf3;border-radius:14px}table{margin:0!important}thead{background:#f8fafc}th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#64748b!important;border:0!important;padding:15px!important}td{padding:15px!important;border-color:#eef2f7!important;color:#334155}
+.portal-head{background:linear-gradient(135deg,#0b1220,#172554);color:#fff;border-radius:24px;padding:32px;margin-bottom:28px;box-shadow:0 20px 50px rgba(15,23,42,.1)}
+.stats-bar{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.stat-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(10px);color:#fff;padding:8px 16px;border-radius:12px;font-size:14px;font-weight:700}
+@media(max-width:850px){.profile-grid{grid-template-columns:1fr}.identity{max-width:none}.detail-grid{grid-template-columns:1fr}.address{grid-column:auto}}
+@media print{.profile-head{padding-bottom:30px}.content{margin:20px auto}.actions{display:none}.profile-page{background:#fff}.card{box-shadow:none}}
+</style>
+
+<div class="profile-page">
+  <div class="profile-head"><div class="eyebrow">Student Records</div><h1>Student Profile</h1><p>Personal and academic database record</p></div>
+  <div class="content">
+    <div class="profile-grid">
+      <div class="card identity">
+        {% if student.std_image %}<img src="{{ student.std_image.url }}" alt="Student Picture" class="photo">{% else %}<div class="no-photo">No Photo Available</div>{% endif %}
+        <h2>{{ student.std_name }}</h2><p class="id">Student ID: {{ student.std_id }}</p>
+        <span class="badgex">{{ student.semester }}</span>
+      </div>
+      <div class="card details">
+        <h3>Personal Details</h3>
+        <div class="detail-grid">
+          <div class="detail"><span>Father's Name</span><strong>{{ student.std_father_name }}</strong></div>
+          <div class="detail"><span>Department</span><strong>{{ student.semester.department }}</strong></div>
+          <div class="detail"><span>Phone Number</span><strong>{{ student.std_phone }}</strong></div>
+          <div class="detail"><span>Email Address</span><strong>{{ student.std_email|default:"—" }}</strong></div>
+          <div class="detail"><span>Date of Birth</span><strong>{{ student.std_dob|date:"d M, Y"|default:"—" }}</strong></div>
+          <div class="detail"><span>Current Age</span><strong>{{ student.std_age|default:"—" }} Years Old</strong></div>
+          <div class="detail address"><span>Permanent Address</span><strong>{{ student.std_address }}</strong></div>
+        </div>
+        <div class="actions">
+          <a href="{% url 'students' id=student.semester.id %}">← Back</a>
+          <button onclick="window.print()">Print Record</button>
+          <a class="delete" href="{% url 'delete_student' id=student.id %}">Delete</a>
+          <a class="update" href="{% url 'update_student' id=student.id %}">Update</a>
+        </div>
+      </div>
+    </div>
+    {%for semester in semesterhistory%}
+    <div class="card courses">
+      <h3>{{semester.semester}}</h3>
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th>Sr</th><th>Course Title</th><th>Course Code</th><th>Credit Hours</th><th>Total Marks</th><th>Obtained Marks</th><th>Q.P</th><th>Grade</th><th>Percentage</th></tr>
+        </thead>
+        <tbody>{% for student in semester.student.coursestudent.all %}
+          {% if student.course.semester == semester.semester%}
+          <tr><td>{{forloop.counter}}</td>
+            <td>{{student.course.course_title}}</td>
+            <td>{{student.course.course_code}}</td>
+            <td>{{student.course.course_credit}}</td>
+            <td>{{student.course_total_marks}}</td>
+            <td><strong>{{student.course_marks}}</strong></td>
+            <td>{{student.course_qp|floatformat:2 }}</td>
+            <td>{{student.course_grade}}</td>
+            <td>{{student.course_percentage|floatformat:1 }} %</td>
+          </tr>{% endif %}{% endfor %}</tbody>
+      </table></div>
+      <div class="portal-head">
+      <div class="stats-bar">
+      <div class="stat-pill">Obtained Marks: {{totalmarks}}</div>
+      <div class="stat-pill">Grade: {{semester.grade}}</div>
+      <div class="stat-pill">Percentage: {{semester.percentage}}</div>
+      <div class="stat-pill">Semester GPA: {{semester.sgpa|floatformat:1}}</div>
+      </div>
+      </div>
+     
+    </div>
+     {%endfor%}<div class="stat-pill">CGPA:{{student.cgpa|floatformat:2}} </div>
+    
+  </div>
+</div>
+{% endblock %}
